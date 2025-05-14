@@ -10,7 +10,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import oopproject.rpmsfinal.*;
 
+import java.io.IOException;
 import java.sql.*;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 public class PanicController {
     Patient patient = (Patient) SessionNative.getCurrentUser();
@@ -18,6 +24,8 @@ public class PanicController {
     private Button backButton;
     @FXML
     private Button addButton;
+    @FXML
+    private Button csvUploadButton;
     @FXML
     private Text vitalsText;
     @FXML
@@ -57,44 +65,20 @@ public class PanicController {
                     Integer.parseInt(diastolicBP.getText()),
                     Integer.parseInt(respirationRate.getText()),
                     Integer.parseInt(oxygenSaturation.getText()),
-                    ""  // Notes (optional)
+                    ""
             );
 
-            // Generate UUID and current timestamp
-            String recordId = record.getVitalsId();
-            Timestamp currentTimestamp = Timestamp.valueOf(java.time.LocalDateTime.now());
-
-            // Save to database
-            String sql = "INSERT INTO vital_records " +
-                    "(record_id, user_id, timestamp, temperature, heart_rate, systolic_bp, diastolic_bp, respiration_rate, oxygen_saturation, notes, alerts, is_critical) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                stmt.setString(1, recordId);
-                stmt.setString(2, record.getUserId());
-                stmt.setTimestamp(3, currentTimestamp);
-                stmt.setDouble(4, record.getTemperature());
-                stmt.setInt(5, record.getHeartRate());
-                stmt.setInt(6, record.getSystolicBP());
-                stmt.setInt(7, record.getDiastolicBP());
-                stmt.setInt(8, record.getRespirationRate());
-                stmt.setDouble(9, record.getOxygenSaturation());
-                stmt.setString(10, record.getNotes());
-                stmt.setString(11, String.valueOf(record.getAlerts()));
-                stmt.setBoolean(12, record.isCritical());
-
-                stmt.executeUpdate();
-            }
-
-            if (record.isCritical()) {
-                vitalsText.setText("PANIC BUTTON ACTIVATED");
-                String email = fetchUserEmail(patient.getAssignedDoctor());
-                String message = "The health of your patient " + patient.getUserId() + " " + patient.getName() + "is unstable. Check on them as soon as possible!";
-                emailer.sendNotification(email,"Patient Health Critical!",message);
+            if (record.uploadVitals()) {
+                if (record.isCritical()) {
+                    vitalsText.setText("PANIC BUTTON ACTIVATED");
+                    String email = fetchUserEmail(patient.getAssignedDoctor());
+                    String message = "The health of your patient " + patient.getUserId() + " " + patient.getName() + " is unstable. Check on them as soon as possible!";
+                    emailer.sendNotification(email, "Patient Health Critical!", message);
+                } else {
+                    vitalsText.setText("Vitals Are Stable");
+                }
             } else {
-                vitalsText.setText("Vitals Are Stable");
+                vitalsText.setText("Error saving vitals.");
             }
 
         } catch (NumberFormatException e) {
@@ -107,5 +91,66 @@ public class PanicController {
     private String fetchUserEmail(String userId) {
         Doctor doctor = userManager.getDoctorById(userId);
         return doctor.getEmail();
+    }
+
+    @FXML
+    private void handleCsvUpload() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Vitals CSV File");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        File file = fileChooser.showOpenDialog(csvUploadButton.getScene().getWindow());
+        if (file == null) {
+            vitalsText.setText("No file selected.");
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            int successCount = 0;
+            int lineNumber = 0;
+
+            while ((line = br.readLine()) != null) {
+                lineNumber++;
+                String[] values = line.split(",");
+                if (values.length < 6) continue;
+
+                try {
+                    VitalRecord record = new VitalRecord(
+                            patient.getUserId(),
+                            Double.parseDouble(values[0].trim()),
+                            Integer.parseInt(values[1].trim()),
+                            Integer.parseInt(values[2].trim()),
+                            Integer.parseInt(values[3].trim()),
+                            Integer.parseInt(values[4].trim()),
+                            Double.parseDouble(values[5].trim()),
+                            ""
+                    );
+
+                    if (record.uploadVitals()) {
+                        successCount++;
+                        if (record.isCritical()) {
+                            vitalsText.setText("PANIC BUTTON ACTIVATED");
+                            String email = fetchUserEmail(patient.getAssignedDoctor());
+                            String message = "The health of your patient " + patient.getUserId() + " " + patient.getName() + " is unstable. Check on them as soon as possible!";
+                            emailer.sendNotification(email, "Patient Health Critical!", message);
+                        }
+                        else{
+                            vitalsText.setText(successCount + " records uploaded.");
+                        }
+                    }
+
+                } catch (Exception e) {
+                    vitalsText.setText("Error saving vitals.");
+                    e.printStackTrace();
+                }
+            }
+
+
+
+        } catch (IOException e) {
+            vitalsText.setText("Failed to read the CSV file.");
+            e.printStackTrace();
+        }
     }
 }

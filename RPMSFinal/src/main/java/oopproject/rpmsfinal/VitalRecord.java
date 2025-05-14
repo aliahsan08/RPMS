@@ -1,9 +1,6 @@
 package oopproject.rpmsfinal;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -221,6 +218,35 @@ public class VitalRecord {
                 diastolicBP >= 40 && diastolicBP <= 130 &&
                 respirationRate >= 8 && respirationRate <= 40 &&
                 oxygenSaturation >= 70 && oxygenSaturation <= 100;
+    }
+    public boolean uploadVitals() {
+        String sql = "INSERT INTO vital_records " +
+                "(record_id, user_id, timestamp, temperature, heart_rate, systolic_bp, diastolic_bp, respiration_rate, oxygen_saturation, notes, alerts, is_critical) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, this.getVitalsId());
+            stmt.setString(2, this.getUserId());
+            stmt.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            stmt.setDouble(4, this.getTemperature());
+            stmt.setInt(5, this.getHeartRate());
+            stmt.setInt(6, this.getSystolicBP());
+            stmt.setInt(7, this.getDiastolicBP());
+            stmt.setInt(8, this.getRespirationRate());
+            stmt.setDouble(9, this.getOxygenSaturation());
+            stmt.setString(10, this.getNotes());
+            stmt.setString(11, String.valueOf(this.getAlerts()));
+            stmt.setBoolean(12, this.isCritical());
+
+            stmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // Return copy of alert messages

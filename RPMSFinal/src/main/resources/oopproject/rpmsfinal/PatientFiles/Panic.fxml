@@ -51,7 +51,8 @@
                      </children>
                   </HBox>
                   <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddButton" styleClass="card-button" text="Add" />
-                  <Text fx:id="vitalsText" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER"/>
+                  <Button fx:id="csvUploadButton" mnemonicParsing="false" onAction="#handleCsvUpload" styleClass="card-button" text="CSV Upload" />
+                  <Text fx:id="vitalsText" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" />
                </children>
                 </VBox>
 
