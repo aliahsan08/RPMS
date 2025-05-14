@@ -8,24 +8,25 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-
+    // Start method for JavaFX application; sets up the stage
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Correctly load Login.fxml from the classpath
+            // Load the UserType.fxml file (entry point for the app)
             Parent root = FXMLLoader.load(getClass().getResource("UserType.fxml"));
 
-            // Set up the scene and stage
+            // Create and set up the scene with the loaded FXML root
             Scene scene = new Scene(root);
-            primaryStage.setTitle("Remote Patient Management System");
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            primaryStage.setTitle("Remote Patient Management System"); // Set window title
+            primaryStage.setScene(scene); // Set scene to primary stage
+            primaryStage.show(); // Display the stage
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print any error that occurs
         }
     }
 
+    // Main method to launch the JavaFX application
     public static void main(String[] args) {
-        launch(args);  // Launch the JavaFX application
+        launch(args);  // Launch the application
     }
 }

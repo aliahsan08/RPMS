@@ -9,11 +9,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import static oopproject.rpmsfinal.Appointment.generateNextId;
 
-/**
- * VitalRecord class
- * Represents a single record of patient vital signs
- */
 public class VitalRecord {
+    // Fields representing vital data and metadata
     private final String vitalsId;
     private final String userId;
     private final LocalDateTime timestamp;
@@ -25,10 +22,11 @@ public class VitalRecord {
     private final double oxygenSaturation;
     private final String notes;
 
+    // Static storage for in-memory vitals and formatting
     private static final Map<String, List<VitalRecord>> patientVitalsMap = new HashMap<>();
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // Add these constants at the top of the class
+    // Constants for normal vital ranges
     private static final double MIN_TEMPERATURE = 36.1;
     private static final double MAX_TEMPERATURE = 37.8;
     private static final int MIN_HEART_RATE = 60;
@@ -41,22 +39,12 @@ public class VitalRecord {
     private static final int MAX_RESPIRATION = 20;
     private static final double MIN_OXYGEN = 95.0;
 
+    // Alert and critical status tracking
     private final List<String> alerts;
     private final boolean isCritical;
     private static final Map<String, List<VitalRecord>> patientVitalsDatabase = new HashMap<>();
 
-    /**
-     * Constructor for creating a new vital record
-     *
-     * @param patientId The ID of the patient
-     * @param temperature The patient's temperature in Celsius
-     * @param heartRate The patient's heart rate in bpm
-     * @param systolicBP The patient's systolic blood pressure in mmHg
-     * @param diastolicBP The patient's diastolic blood pressure in mmHg
-     * @param respirationRate The patient's respiration rate in breaths per minute
-     * @param oxygenSaturation The patient's oxygen saturation percentage
-     * @param notes Additional notes about the vital signs
-     */
+    // Constructor to create and analyze a new vital record
     public VitalRecord(String patientId, double temperature, int heartRate, int systolicBP,
                        int diastolicBP, int respirationRate, double oxygenSaturation, String notes) throws SQLException {
         this.vitalsId = generateNextId("VR","vital_records","record_id");
@@ -71,10 +59,11 @@ public class VitalRecord {
         this.notes = notes;
         this.alerts = new ArrayList<>();
 
-        this.isCritical = analyzeVitals();
-        addToPatientHistory();
+        this.isCritical = analyzeVitals(); // Evaluate whether vitals are critical
+        addToPatientHistory(); // Store the record in local history
     }
 
+    // Analyze each vital to determine if it's outside normal range
     private boolean analyzeVitals() {
         boolean critical = false;
 
@@ -105,10 +94,11 @@ public class VitalRecord {
         return critical;
     }
 
-    // Getters
+    // Getters for accessing individual fields
     public String getVitalsId() {
         return vitalsId;
     }
+
     public String getUserId() {
         return userId;
     }
@@ -145,11 +135,7 @@ public class VitalRecord {
         return notes;
     }
 
-    /**
-     * Checks if any vital signs are outside normal ranges
-     *
-     * @return true if any vitals are abnormal, false otherwise
-     */
+    // Check if any of the vitals are abnormal
     public boolean hasAbnormalVitals() {
         return temperature < 36.1 || temperature > 37.8 ||
                 heartRate < 60 || heartRate > 100 ||
@@ -159,22 +145,13 @@ public class VitalRecord {
                 oxygenSaturation < 95.0;
     }
 
-    /**
-     * Gets a formatted string representation of the record timestamp
-     *
-     * @return Formatted timestamp string
-     */
+    // Format timestamp for display
     public String getFormattedTimestamp() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return timestamp.format(formatter);
     }
 
-    /**
-     * Gets all vital records for a specific patient
-     *
-     * @param patientId The ID of the patient
-     * @return List of vital records sorted by timestamp (most recent first)
-     */
+    // Fetch all stored vital records for a given patient from the database
     public static List<VitalRecord> getPatientVitals(String patientId) {
         List<VitalRecord> records = new ArrayList<>();
 
@@ -185,6 +162,7 @@ public class VitalRecord {
             ps.setString(1, patientId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    // Reconstruct record from database values
                     VitalRecord record = new VitalRecord(
                             rs.getString("user_id"),
                             rs.getDouble("temperature"),
@@ -206,15 +184,12 @@ public class VitalRecord {
         return records;
     }
 
-
-    /**
-     * Adds a vital record to the patient's history
-     * Called automatically by the constructor
-     */
+    // Store current record in in-memory map
     private void addToPatientHistory() {
         patientVitalsMap.computeIfAbsent(this.userId, k -> new ArrayList<>()).add(this);
     }
 
+    // String representation of the vital record for display
     @Override
     public String toString() {
         return String.format("""
@@ -235,6 +210,8 @@ public class VitalRecord {
                 isCritical ? "CRITICAL" : " Normal"
         );
     }
+
+    // Validate input values are within realistic human range
     private static boolean isValidVitalData(double temperature, int heartRate,
                                             int systolicBP, int diastolicBP,
                                             int respirationRate, double oxygenSaturation) {
@@ -246,14 +223,12 @@ public class VitalRecord {
                 oxygenSaturation >= 70 && oxygenSaturation <= 100;
     }
 
-
-
-    // Add getter for alerts
+    // Return copy of alert messages
     public List<String> getAlerts() {
         return new ArrayList<>(alerts);
     }
 
-    // Add getter for critical status
+    // Return whether the record is considered critical
     public boolean isCritical() {
         return isCritical;
     }

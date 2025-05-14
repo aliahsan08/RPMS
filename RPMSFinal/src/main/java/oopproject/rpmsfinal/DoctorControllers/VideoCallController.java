@@ -12,30 +12,27 @@ import oopproject.rpmsfinal.MeetingLauncher;
 
 public class VideoCallController {
 
-    private final MeetingLauncher meetingLauncher = new MeetingLauncher();
-    @FXML
-    private Button backButton;
-    @FXML
-    private Button joinButton;
-    @FXML
-    private Text videoCallText;
+    private final MeetingLauncher meetingLauncher = new MeetingLauncher(); // Initialize MeetingLauncher to manage video calls
+    @FXML private Button backButton; // Button to navigate back to the home screen
+    @FXML private Button joinButton; // Button to join the video call
+    @FXML private Text videoCallText; // Text element for displaying video call status
 
     @FXML
     private void goBackHome() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/oopproject/rpmsfinal/DoctorFiles/Home.fxml"));
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Parent root = FXMLLoader.load(getClass().getResource("/oopproject/rpmsfinal/DoctorFiles/Home.fxml")); // Load home screen
+            Stage stage = (Stage) backButton.getScene().getWindow(); // Get the current stage (window)
+            stage.setScene(new Scene(root)); // Set the scene to the home screen
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @FXML
-    private void handleJoinButton() {
-        boolean success = meetingLauncher.launchMeeting();  // opens default meeting link
-        if (!success) {
-            videoCallText.setText("Unable to launch meeting");
+            e.printStackTrace(); // Print any exceptions to the console for debugging
         }
     }
 
+    @FXML
+    private void handleJoinButton() {
+        boolean success = meetingLauncher.launchMeeting();  // Attempt to launch the meeting (opens default meeting link)
+        if (!success) { // If launching the meeting fails
+            videoCallText.setText("Unable to launch meeting"); // Display error message
+        }
+    }
 }

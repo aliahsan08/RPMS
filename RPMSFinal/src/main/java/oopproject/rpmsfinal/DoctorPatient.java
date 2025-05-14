@@ -5,31 +5,33 @@ import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import static oopproject.rpmsfinal.Appointment.generateNextId;
+
 public class DoctorPatient {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Formatter for timestamp
 
     // Inner class to store doctor feedback
     public static class DoctorFeedback {
-        private String feedbackId;
-        private String doctorId;
-        private String patientId;
-        private LocalDateTime timestamp;
-        private String recommendations;
-        private String prescription;
-        private String diagnosis;
+        private String feedbackId; // Unique ID for the feedback
+        private String doctorId;   // Doctor's unique ID
+        private String patientId;  // Patient's unique ID
+        private LocalDateTime timestamp; // Timestamp of feedback
+        private String recommendations; // Doctor's recommendations for the patient
+        private String prescription;    // Prescription details
+        private String diagnosis;       // Diagnosis made by the doctor
 
-
+        // Constructor to initialize feedback details
         public DoctorFeedback(String doctorId, String patientId, String diagnosis,
                               String recommendations, String prescription) throws SQLException {
-            this.feedbackId = generateNextId("FB","doctor_feedback","feedback_id");
+            this.feedbackId = generateNextId("FB", "doctor_feedback", "feedback_id"); // Generates a unique feedback ID
             this.doctorId = doctorId;
             this.patientId = patientId;
-            this.timestamp = LocalDateTime.now();
+            this.timestamp = LocalDateTime.now(); // Sets the timestamp to the current time
             this.diagnosis = diagnosis;
             this.recommendations = recommendations;
             this.prescription = prescription;
-
         }
+
+        // Getter methods
         public String getFeedbackId() {
             return feedbackId;
         }
@@ -58,7 +60,7 @@ public class DoctorPatient {
             return prescription;
         }
 
-        // Setters
+        // Setter methods
         public void setFeedbackId(String feedbackId) {
             this.feedbackId = feedbackId;
         }
@@ -86,6 +88,8 @@ public class DoctorPatient {
         public void setPrescription(String prescription) {
             this.prescription = prescription;
         }
+
+        // Overrides toString method to return a formatted string of the doctor's feedback
         @Override
         public String toString() {
             return String.format("""

@@ -16,34 +16,36 @@ import java.io.IOException;
 public class LoginController {
     private static final UserManager userManager = UserManager.getInstance();
     @FXML
-    private Text loginText;
+    private Text loginText;  // Text object to display login status messages
     @FXML
-    private TextField usernameField;
+    private TextField usernameField;  // Input field for username
 
     @FXML
-    private PasswordField passwordField;
+    private PasswordField passwordField;  // Input field for password
 
     @FXML
-    private Button loginButton;
+    private Button loginButton;  // Button for logging in
     @FXML
-    private Button backButton;
-    private String userType;
+    private Button backButton;  // Button to go back to previous screen
+    private String userType;  // Holds the user type (Patient, Doctor, Administrator)
 
     @FXML
     public void initialize() {
-        userType = SessionNative.getUserType();
+        userType = SessionNative.getUserType();  // Get the user type from the session
     }
+
     @FXML
     private void handleLogin() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-        SessionNative.setUsername(username);
+        String username = usernameField.getText();  // Get username from input field
+        String password = passwordField.getText();  // Get password from input field
+        SessionNative.setUsername(username);  // Store the username in the session
 
         if (username.isEmpty() || password.isEmpty()) {
-            return;
+            return;  // Do nothing if username or password is empty
         }
 
         String table = "";
+        // Determine which table to query based on the user type
         if ("Patient".equals(userType)) {
             table = "patients";
         } else if ("Doctor".equals(userType)) {
@@ -52,6 +54,7 @@ public class LoginController {
             table = "administrators";
         }
 
+        // SQL query to validate user credentials
         String query = "SELECT * FROM " + table + " WHERE username = ? AND password = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -63,21 +66,21 @@ public class LoginController {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String userId = rs.getString("user_id");
-                SessionNative.setUserId(userId);
+                String userId = rs.getString("user_id");  // Get user ID from result
+                SessionNative.setUserId(userId);  // Store user ID in the session
 
-                // Common fields
-                String name = rs.getString("name");  // Replace with your actual column name
+                // Common fields for all user types
+                String name = rs.getString("name");
                 int age = rs.getInt("age");
                 String gender = rs.getString("gender");
                 String phone = rs.getString("phone");
                 String email = rs.getString("email");
 
-                // Create user object based on type
+                // Create user object based on user type
                 if ("Patient".equals(userType)) {
                     String assignedDoctor = rs.getString("assigned_doctor");
                     Patient patient = new Patient(username, password, userId, name, age, gender, phone, email, assignedDoctor);
-                    SessionNative.setCurrentUser(patient);
+                    SessionNative.setCurrentUser(patient);  // Set current user in session
                 } else if ("Doctor".equals(userType)) {
                     String specialization = rs.getString("specialization");
                     String workingHours = rs.getString("working_hours");
@@ -91,7 +94,7 @@ public class LoginController {
                     SessionNative.setCurrentUser(admin);
                 }
 
-                // Redirect to appropriate home page
+                // Redirect to the corresponding home page based on user type
                 String fxmlPath = null;
                 if ("Patient".equals(userType)) {
                     fxmlPath = "PatientFiles/Home.fxml";
@@ -104,29 +107,27 @@ public class LoginController {
                 if (fxmlPath != null) {
                     Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
                     Stage stage = (Stage) loginButton.getScene().getWindow();
-                    stage.setScene(new Scene(root));
+                    stage.setScene(new Scene(root));  // Set the new scene for the appropriate home page
                 }
 
             } else {
-                System.out.println("Invalid credentials.");
-                // Optionally show error on UI
+                loginText.setText("Invalid Credentials");  // Display error message if credentials are incorrect
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            loginText.setText("Invalid Credentials");
+            e.printStackTrace();  // Log the error for debugging
+            loginText.setText("Invalid Credentials");  // Display error message if an exception occurs
         }
     }
-
 
     @FXML
     private void goBack() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("UserType.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("UserType.fxml"));  // Load the UserType.fxml page
             Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root));  // Set the new scene to navigate back
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // Log the error for debugging
         }
     }
 }

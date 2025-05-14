@@ -1,5 +1,10 @@
 package oopproject.rpmsfinal;
+
+
+ // Abstract base class for all user types in the system.
+
 public abstract class User {
+    // Basic user information
     private final String username;
     private final String password;
     private final String userId;
@@ -9,6 +14,7 @@ public abstract class User {
     private String phone;
     private String email;
 
+    // Constructor to initialize user fields
     public User(String username, String password, String userId, String name, int age, String gender, String phone, String email) {
         this.username = username;
         this.password = password;
@@ -20,7 +26,7 @@ public abstract class User {
         this.email = email;
     }
 
-    // Getters and setters
+    // Getters and setters for mutable fields
     public String getUsername() {
         return username;
     }
@@ -73,10 +79,12 @@ public abstract class User {
         this.email = email;
     }
 
+    // Verifies if the provided password matches the user's password
     public boolean checkPassword(String inputPassword) {
         return this.password.equals(inputPassword);
     }
 
+    // Returns a string representation of the user's basic info
     @Override
     public String toString() {
         return "User ID: " + userId +
@@ -87,4 +95,3 @@ public abstract class User {
                 "\nEmail: " + email;
     }
 }
-

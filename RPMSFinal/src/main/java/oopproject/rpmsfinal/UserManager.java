@@ -11,10 +11,11 @@ public class UserManager {
     private static UserManager instance;
 
     private UserManager() {
-        // private constructor
+        // Private constructor for singleton pattern
     }
 
     public static synchronized UserManager getInstance() {
+        // Return the singleton instance
         if (instance == null) {
             instance = new UserManager();
         }
@@ -25,14 +26,13 @@ public class UserManager {
      * Look up a user by their database ID.
      */
     public User getUserById(String userId) {
-        // Try each table in turn
+        // Try each user type in sequence
         User u = getPatientById(userId);
         if (u != null) return u;
         u = getDoctorById(userId);
         if (u != null) return u;
         return getAdminById(userId);
     }
-
 
     /**
      * Look up a user by their username across all three tables.
@@ -63,6 +63,7 @@ public class UserManager {
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                // Construct and return Patient object
                 return new Patient(
                         rs.getString("username"),
                         rs.getString("password"),
@@ -113,6 +114,7 @@ public class UserManager {
              Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
+                // Add each patient to the list
                 list.add(new Patient(
                         rs.getString("username"),
                         rs.getString("password"),
