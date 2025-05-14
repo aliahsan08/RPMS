@@ -36,7 +36,9 @@ Setting Up the Database (Using MySQL Workbench)
 Once this is done, you're ready to run the application!
 
 
-NOTE: To login to the application after running the Main class, the user needs username and passwords. A few are mentioned as follows to assist the user:
+NOTE: 
+1) A CSV file has been provided which can be used to upload vitals. Make sure the CSV files you use only have values as number and commas, they must NOT have any quotation marks (").
+2)To login to the application after running the Main class, the user needs username and passwords. A few are mentioned as follows to assist the user:
 
 Patient:
 Username: a_ahsan
