@@ -1,39 +1,111 @@
-RPMS - Remote Patient Monitoring System
+REMOTE PATIENT MONITORING SYSTEM (RPMS)
 
-This is a JavaFX-based desktop application for managing users, appointments, vitals, and administrative operations in a medical environment. It uses a MySQL database for persistent data storage
+This is a JavaFX-based patient health tracking application using Java, Maven, and MySQL.
 
-Requirements
-- Java 17 or above
-- JavaFX SDK
+This guide helps you run the project after downloading it as a ZIP file from GitHub.
+
+
+1. REQUIREMENTS
+
+
+Before you begin, make sure you have the following installed:
+
+- Java JDK 17 or newer
+- Maven
+- JavaFX SDK (download from https://gluonhq.com/products/javafx/)
 - MySQL Server
-- MySQL Connector/J
-- IDE (e.g., IntelliJ)
+- MySQL Workbench
+- An IDE like IntelliJ IDEA or Visual Studio Code
 
-Project Structure
 
-- 'src/': Java source code
-- 'resources/': FXML and CSS files
-- 'libs/': Contains the used jar files (in case libraries don't connect automatically)
+2. DOWNLOAD AND EXTRACT
 
-How to Run
 
-1. Import the project into your IDE as a Maven project.
-2. Configure JavaFX:
-   - Set VM options to include JavaFX modules
-3. Ensure MySQL is running and the database is properly set up. An sql script is provided for the user to set up the database.
-4. Update your DB credentials in the 'DBConnection.java' file.
-5. Run the Main class to launch the application.
+1. Go to the GitHub page for the project.
+2. Click the green "Code" button.
+3. Choose "Download ZIP".
+4. Extract the ZIP file to any folder on your computer.
 
-Setting Up the Database (Using MySQL Workbench)
+
+3. OPENING THE PROJECT IN INTELLIJ IDEA
+
+
+1. Open IntelliJ IDEA.
+2. Click "Open" and select the extracted project folder.
+3. IntelliJ will detect the Maven project and start downloading dependencies.
+4. Go to:
+   File > Project Structure > Modules > Dependencies
+   Make sure the JavaFX SDK is added here.
+5. Then go to:
+   Run > Edit Configurations
+   Add the following under VM options:
+
+   --module-path "C:\path\to\javafx-sdk-21\lib" --add-modules javafx.controls,javafx.fxml
+
+6. Click Run.
+
+
+4. OPENING THE PROJECT IN VS CODE
+
+
+1. Open Visual Studio Code.
+2. Make sure the following extensions are installed:
+   - Java Extension Pack
+   - Maven for Java
+
+3. Open the extracted folder in VS Code.
+4. Press F5 or click "Run and Debug".
+5. If needed, add a launch.json under .vscode folder with this:
+
+   {
+     "type": "java",
+     "name": "Launch App",
+     "request": "launch",
+     "mainClass": "your.main.ClassName",
+     "vmArgs": "--module-path /path/to/javafx-sdk-21/lib --add-modules javafx.controls,javafx.fxml"
+   }
+
+
+5. SETTING UP THE DATABASE IN MYSQL
+
 
 1. Open MySQL Workbench.
-2. Connect to your local MySQL server.
-3. Click on File -> Open SQL Script and select the file 'RPMS_schema.sql' in the files downloaded from the repository.
-4. After the script opens, click the lightning bolt icon (Execute) or press Ctrl+Shift+Enter to run the script.
-5. This will create the required database and tables, and insert some sample data.
-6. In the class DBConnection, make sure to change the credentials so that the project can connect to your local database. You have to change URL, USER and PASS attributes.
+2. Connect to your local server.
+3. Open a new SQL tab.
+4. Copy and paste the SQL script provided in the project (RPMS_Schema.sql).
+5. Run the script to create tables and data.
 
-Once this is done, you're ready to run the application!
+Make sure the database name matches what is used in the code:
+For example, in DBConnection.java:
+
+  String url = "jdbc:mysql://localhost:3306/rpms";
+  String username = "your_mysql_username";
+  String password = "your_mysql_password";
+
+Change the username and password as needed.
+
+
+6. RUNNING THE APP
+
+
+Once dependencies are loaded, JavaFX is set up, and the database is ready:
+
+- Click Run in IntelliJ or press F5 in VS Code.
+- Login as patient, doctor, or admin (use sample credentials).
+  
+
+7. TROUBLESHOOTING
+
+
+Problem: JavaFX error
+Solution: Check the module path and SDK folder. Use correct VM options.
+
+Problem: Database connection failed
+Solution: Ensure MySQL is running and your credentials are correct.
+
+Problem: Dependencies not found
+Solution: Open terminal in project folder and run:
+   mvn install
 
 
 NOTE: 
