@@ -109,8 +109,9 @@ Solution: Open terminal in project folder and run:
 
 
 NOTE: 
-1) A CSV file has been provided which can be used to upload vitals. Make sure the CSV files you use only have values as number and commas, they must NOT have any quotation marks (").
-2)To login to the application after running the Main class, the user needs username and passwords. A few are mentioned as follows to assist the user:
+1. A CSV file has been provided which can be used to upload vitals. Make sure the CSV files you use only have values as number and commas, they must NOT have any quotation marks (").
+2. The jar files have been provided in the RPMSFinal/libs folder in case the user wants to manually add them as dependencies.
+3.To login to the application after running the Main class, the user needs username and passwords. A few are mentioned as follows to assist the user:
 
 Patient:
 Username: a_ahsan
