@@ -21,41 +21,41 @@ Before you begin, make sure you have the following installed:
 2. DOWNLOAD AND EXTRACT
 
 
-1. Go to the GitHub page for the project.
-2. Click the green "Code" button.
-3. Choose "Download ZIP".
-4. Extract the ZIP file to any folder on your computer.
+-Go to the GitHub page for the project.
+-Click the green "Code" button.
+-Choose "Download ZIP".
+-Extract the ZIP file to any folder on your computer.
 
 
 3. OPENING THE PROJECT IN INTELLIJ IDEA
 
 
-1. Open IntelliJ IDEA.
-2. Click "Open" and select the extracted project folder.
-3. IntelliJ will detect the Maven project and start downloading dependencies.
-4. Go to:
+-Open IntelliJ IDEA.
+-Click "Open" and select the extracted project folder.
+-IntelliJ will detect the Maven project and start downloading dependencies.
+-Go to:
    File > Project Structure > Modules > Dependencies
    Make sure the JavaFX SDK is added here.
-5. Then go to:
+-Then go to:
    Run > Edit Configurations
    Add the following under VM options:
 
    --module-path "C:\path\to\javafx-sdk-21\lib" --add-modules javafx.controls,javafx.fxml
 
-6. Click Run.
+-Click Run.
 
 
 4. OPENING THE PROJECT IN VS CODE
 
 
-1. Open Visual Studio Code.
-2. Make sure the following extensions are installed:
+-Open Visual Studio Code.
+-Make sure the following extensions are installed:
    - Java Extension Pack
    - Maven for Java
 
-3. Open the extracted folder in VS Code.
-4. Press F5 or click "Run and Debug".
-5. If needed, add a launch.json under .vscode folder with this:
+-Open the extracted folder in VS Code.
+-Press F5 or click "Run and Debug".
+-If needed, add a launch.json under .vscode folder with this:
 
    {
      "type": "java",
@@ -69,11 +69,11 @@ Before you begin, make sure you have the following installed:
 5. SETTING UP THE DATABASE IN MYSQL
 
 
-1. Open MySQL Workbench.
-2. Connect to your local server.
-3. Open a new SQL tab.
-4. Copy and paste the SQL script provided in the project (RPMS_Schema.sql).
-5. Run the script to create tables and data.
+-Open MySQL Workbench.
+-Connect to your local server.
+-Open a new SQL tab.
+-Copy and paste the SQL script provided in the project (RPMS_Schema.sql).
+-Run the script to create tables and data.
 
 Make sure the database name matches what is used in the code:
 For example, in DBConnection.java:
